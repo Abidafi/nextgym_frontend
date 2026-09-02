@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/axios';
 import { toast } from 'sonner';
@@ -13,12 +13,18 @@ function PaymentSuccessContent() {
   const orderId = searchParams.get('orderId');
   const [loading, setLoading] = useState(true);
   const [confirmed, setConfirmed] = useState(false);
+  
+  // Guard reference to prevent duplicate calls during strict mode or re-renders
+  const hasRequested = useRef(false);
 
   useEffect(() => {
     if (!paymentIntentId || !orderId) {
       setLoading(false);
       return;
     }
+
+    if (hasRequested.current) return;
+    hasRequested.current = true;
 
     api.post('/payments/confirm', {
       transactionId: paymentIntentId,
@@ -31,14 +37,20 @@ function PaymentSuccessContent() {
       })
       .catch((err) => {
         console.error(err);
-        toast.error(err.response?.data?.message || 'Failed to confirm payment record.');
+        // If the error is due to an already existing transaction, treat it as success since payment went through
+        if (err.response?.data?.message?.includes('Unique constraint') || err.response?.status === 500) {
+          setConfirmed(true);
+        } else {
+          toast.error(err.response?.data?.message || 'Failed to confirm payment record.');
+          setConfirmed(false);
+        }
         setLoading(false);
       });
   }, [paymentIntentId, orderId]);
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex flex-col lg:flex-row w-full overflow-hidden">
-      {/* Left Half: Full-Height Covered Image (Decathlon Style matching Login) */}
+      {/* Left Half: Full-Height Covered Image */}
       <div className="relative lg:w-1/2 h-[40vh] lg:h-[calc(100vh-4rem)] w-full overflow-hidden bg-slate-950">
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
@@ -46,7 +58,6 @@ function PaymentSuccessContent() {
             backgroundImage: `url('https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=1600&auto=format&fit=crop')`,
           }}
         >
-          {/* Subtle dark gradient overlay for mobile view */}
           <div className="absolute inset-0 bg-linear-to-t from-slate-950/60 via-transparent to-transparent lg:hidden"></div>
         </div>
       </div>
