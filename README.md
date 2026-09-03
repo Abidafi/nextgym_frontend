@@ -182,8 +182,8 @@ Navigate to the **Environment** tab (or click **Advanced**) and inject your keys
 2. Monitor the **Logs** tab. Success is confirmed when you see your initialization logs:
    
    ```text
-   🐘 PostgreSQL pool initialized successfully.
-   🚀 NextGym server is racing hot on port 10000
+   Your service is live 🎉
+   Available at your primary URL https://nextgym-frontend.onrender.com
 
 ## 🤝 Contributing
 
