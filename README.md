@@ -1,28 +1,30 @@
 # NextGym 🏋️‍♂️ - "Rent Sports & Outdoor Gear Instantly"
 
-[![Node.js](https://img.shields.io/badge/Node.js-22.x-green.svg)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue.svg)](https://www.typescriptlang.org/)
-[![Express](https://img.shields.io/badge/Express-5.2-purple.svg)](https://expressjs.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-black?style=flat&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-blue?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![TanStack Query](https://img.shields.io/badge/TanStack%20Query-red?style=flat&logo=reactquery&logoColor=white)](https://tanstack.com/query)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-8.21-blue.svg)](https://www.postgresql.org/)
+[![Stripe JS](https://img.shields.io/badge/Stripe%20JS-blueviolet?style=flat&logo=stripe&logoColor=white)](https://stripe.com/docs/stripe-js)
 [![License](https://img.shields.io/badge/License-ISC-yellow.svg)](LICENSE)
 
 ## 📋 Overview
 
-**NextGym** is a robust backend API built for a sports and outdoor equipment rental service, designed and developed as a complete system implementation. Customers can browse available gear, place rental orders, make secure payments, and return equipment. Providers manage their gear inventory and fulfill rental orders, while Admins oversee the platform, manage users, and moderate listings.
+**NextGym** is a Frontend built for a sports and outdoor equipment rental service, designed and developed as a complete system implementation. Customers can browse available gear, place rental orders, make secure payments, and return equipment. Providers manage their gear inventory and fulfill rental orders, while Admins oversee the platform, manage users, and moderate listings.
 
-🔗 **Live Backend API URL:** https://nextgym.onrender.com/
+🔗 **Live Frontend URL:** https://nextgym-frontend.onrender.com/
 
 ## 🛠️ Tech Stack
 
 <div align="left" style="background-color: #f4f6f9; padding: 10px; border-radius: 8px;">
 
-| Category | Technology | Purpose |
-| :--- | :--- | :--- |
-| **Backend** | Node.js + Express  | REST API |
-| **Language** | TypeScript  | Type safety |
-| **Database & ORM** | PostgreSQL + Prisma  | Database management & ORM |
-| **Authentication** | JWT (JSON Web Tokens)  | Secure user authentication |
-| **Deployment** | Render | Backend API hosting & deployment|
+| Technology | Purpose |
+|------------|---------|
+| **Next.js** (App Router) | React Framework, Routing, Server Components |
+| **TypeScript** | Type safety (Mandatory) |
+| **Tailwind CSS** | Styling |
+| **TanStack Query (React Query)** | Server state management and data fetching |
+| **Auth.js** or **Custom JWT Middleware** | Authentication and protected routes |
+| **Stripe.js** | Frontend payment gateway integration |
 
 </div>
 
@@ -30,19 +32,18 @@
 
 <div align="left" style="background-color: #f4f6f9; padding: 10px; border-radius: 8px;">
 
-| Role | Description | Key Permissions |
-| :--- | :--- | :--- |
-| **Customer** | Users who rent sports gear | Browse gear, place rental orders, make payments, track status, leave reviews |
-| **Provider** | Gear vendors/rental shops | Manage gear inventory, view incoming orders, update order status |
-| **Admin** | Platform moderators | Manage users, oversee all rentals, manage gear categories |
-
+| Role | Description | Frontend UI Expectations |
+|------|-------------|-----------------|
+| **Customer** | Users who rent sports gear | Public browsing, Protected Customer Dashboard, interactive date-pickers for rentals, checkout/payment flow, order tracking dashboard, review submission. |
+| **Provider** | Gear vendors/rental shops | Protected provider dashboard, gear CRUD forms (with image upload UI), order management tables with status-update actions. |
+| **Admin** | Platform moderators | Protected admin dashboard, user management tables (suspend/activate actions), global platform statistics, content moderation UI. |
 </div>
 
 ## ✨ Features
 
 ### Customer Features
 
-* User registration and role-based login. 
+* Registration and login forms with validation error messages.
 * Place rental orders specifying items and dates. 
 * Secure payments integration via Stripe. 
 * Track rental order status and view payment history. 
@@ -61,103 +62,89 @@
 * Category administration. 
   
 
-## 🏗️ Architecture
+## GearUp - API Integration & Route Mapping
 
-```text
-src/
-├── controllers/
-│   ├── admin.controller.ts
-│   ├── auth.controller.ts
-│   ├── gear.controller.ts
-│   ├── payment.controller.ts
-│   ├── provider.controller.ts
-│   ├── rental.controller.ts
-│   └── review.controller.ts
-├── middlewares/
-├── routes/
-│   ├── admin.routes.ts
-│   ├── auth.routes.ts
-│   ├── category.routes.ts
-│   ├── gear.routes.ts
-│   ├── index.ts
-│   ├── payment.routes.ts
-│   ├── provider.routes.ts
-│   ├── rental.routes.ts
-│   └── review.routes.ts
-├── validations/
-│   ├── auth.validation.ts
-│   ├── category.validation.ts
-│   ├── gear.validation.ts
-│   ├── rental.validation.ts
-│   └── review.validation.ts
-├── app.ts
-├── AppError.ts
-├── prisma.ts
-└── server.ts
+This document maps the Next.js frontend pages and components to the deployed Render backend API endpoints.
+
+## 1. Authentication
+| Method | Endpoint | Description | Frontend Component/Action |
+| :--- | :--- | :--- | :--- |
+| **POST** | `/api/auth/register` | Register new user (customer/provider) | `src/app/auth/register/page.tsx` |
+| **POST** | `/api/auth/login` | Login user, return JWT | `src/app/auth/login/page.tsx` |
+
+## 2. Gear (Public)
+| Method | Endpoint | Description | Frontend Component/Action |
+| :--- | :--- | :--- | :--- |
+| **GET** | `/api/gear` | Get all gear with filters (category, price, brand) | `src/app/gear/page.tsx` |
+| **GET** | `/api/gear/:id` | Get gear details | `src/app/gear/[id]/page.tsx` |
+
+## 3. Rental Orders
+| Method | Endpoint | Description | Frontend Component/Action |
+| :--- | :--- | :--- | :--- |
+| **POST** | `/api/rentals` | Create new rental order | Gear Details "Rent Now" CTA |
+| **GET** | `/api/rentals` | Get user's rental orders | `src/app/dashboard/customer/page.tsx` |
+| **GET** | `/api/rentals/:id` | Get rental order details | Order Details View |
+
+## 4. Payments (Stripe)
+| Method | Endpoint | Description | Frontend Component/Action |
+| :--- | :--- | :--- | :--- |
+| **POST** | `/api/payments/create` | Create a payment intent/session for a rental order | `src/app/dashboard/customer/orders/[id]/pay/page.tsx` |
+| **POST** | `/api/payments/confirm` | Confirm/verify payment (webhook or callback) | `/payment/success` handling |
+| **GET** | `/api/payments` | Get user's payment history | Customer Dashboard Payment Tab |
+
+## 5. Provider Management
+| Method | Endpoint | Description | Frontend Component/Action |
+| :--- | :--- | :--- | :--- |
+| **POST** | `/api/provider/gear` | Add gear to inventory | `src/app/dashboard/provider/gear/new/page.tsx` |
+| **PUT** | `/api/provider/gear/:id` | Update gear listing | Provider Edit Gear Form |
+| **DELETE** | `/api/provider/gear/:id` | Remove gear from inventory | Provider Inventory Table |
+| **GET** | `/api/provider/orders` | Get provider's incoming orders | Provider Orders Management |
+| **PATCH** | `/api/provider/orders/:id` | Update rental order status | Provider Status Action Buttons |
+
+## 6. Reviews
+| Method | Endpoint | Description | Frontend Component/Action |
+| :--- | :--- | :--- | :--- |
+| **POST** | `/api/reviews` | Create review (after rental return) | Customer Review Submission Form |
+
+## 7. Admin
+| Method | Endpoint | Description | Frontend Component/Action |
+| :--- | :--- | :--- | :--- |
+| **GET** | `/api/admin/users` | Get all users | `src/app/dashboard/admin/page.tsx` |
+| **PATCH** | `/api/admin/users/:id` | Update user status (suspend/activate) | Admin User Management Table |
+| **GET** | `/api/admin/gear` | Get all gear listings | Admin Content Moderation |
+| **GET** | `/api/admin/rentals` | Get all rental orders | Admin Platform Rentals View |
+
+## Axios Global Client Configuration (`src/lib/axios.ts`)
+
+All API requests are routed through a centralized Axios instance configured with base URLs and automatic Authorization header injection:
+
+```ts
+import axios from 'axios';
+
+export const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Request interceptor to attach JWT token
+api.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
 ```
-
-## 🌐 API Endpoints Specification  Documentation
-
-All API endpoints have been fully tested using Postman. You can access the complete Postman documentation and route breakdown below:
-
-🔗 **Postman API Docs:** [Postman Docs ](https://documenter.getpostman.com/view/51758518/2sBY4QtLLx)
-
-### Authentication
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Register new user (customer/provider) |
-| POST | `/api/auth/login` | Login user, return JWT |
-| GET | `/api/auth/me` | Get current authenticated user |
-
-### Gear (Public)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/gear` | Get all gear with filters (category, price, brand) |
-| GET | `/api/gear/:id` | Get gear details |
-| GET | `/api/categories` | Get all gear categories |
-
-### Rental Orders
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/rentals` | Create new rental order |
-| GET | `/api/rentals` | Get user's rental orders |
-| GET | `/api/rentals/:id` | Get rental order details |
-
-### Payments (Stripe)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/payments/create` | Create a payment intent/session for a rental order |
-| POST | `/api/payments/confirm` | Confirm/verify payment (webhook or callback) |
-| GET | `/api/payments` | Get user's payment history |
-| GET | `/api/payments/:id` | Get payment details |
-
-### Provider Management
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/provider/gear` | Add gear to inventory |
-| PUT | `/api/provider/gear/:id` | Update gear listing |
-| DELETE | `/api/provider/gear/:id` | Remove gear from inventory |
-| GET | `/api/provider/orders` | Get provider's incoming orders |
-| PATCH | `/api/provider/orders/:id` | Update rental order status |
-
-### Reviews
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/reviews` | Create review (after rental return) |
-
-### Admin
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/admin/users` | Get all users |
-| PATCH | `/api/admin/users/:id` | Update user status (suspend/activate) |
-| GET | `/api/admin/gear` | Get all gear listings |
-| GET | `/api/admin/rentals` | Get all rental orders |
 
 ---
 
 ## 🚀 Deployment Guide (Render)
 
-Follow these steps to deploy the Express & TypeScript backend to **Render**.
+Follow these steps to deploy the NextJS & TypeScript Frontend to **Render**.
 
 ### Step 1: Create Render Web Service
 
@@ -177,26 +164,26 @@ Fill out the configuration dashboard with the following settings:
 | **Root Directory** | *Leave blank* |
 | **Runtime** | `Node` |
 | **Build Command** | `npm install && npm run build` |
-| **Start Command** | `npm run start` |
+| **Start Command** | `npm start` |
 | **Instance Type** | `Free` |
 
 ### Step 3: Environment Variables
 
 Navigate to the **Environment** tab (or click **Advanced**) and inject your keys:
 
-* `DATABASE_URL` = `Your required input from .env file`
-* `JWT_SECRET` = `Your required input from .env file`
+* `NEXT_PUBLIC_API_URL` = `Your required input from .env.local file`
+* `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` = `Your required input from .env.local file`
 
 > ⚠️ **Note:** Do not add `PORT` manually. Render handles its own internal port allocation.
 
-### Step 4: Deploy & Verify
+### Step 4: Deploy 
 
 1. Click **Deploy Web Service**.
 2. Monitor the **Logs** tab. Success is confirmed when you see your initialization logs:
+   
    ```text
    🐘 PostgreSQL pool initialized successfully.
    🚀 NextGym server is racing hot on port 10000
-3. Copy your live public URL from the top left of the dashboard (e.g., [https://nextgym.onrender.com](https://nextgym.onrender.com/) ) to test in Postman or your browser.
 
 ## 🤝 Contributing
 
@@ -213,4 +200,3 @@ This project is licensed under the ISC License.
 ## 👨‍💻 Author
 
 Md. Abidur Rahman  
-
