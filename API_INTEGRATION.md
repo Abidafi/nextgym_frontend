@@ -7,14 +7,12 @@ This document maps the Next.js frontend pages and components to the deployed Ren
 | :--- | :--- | :--- | :--- |
 | **POST** | `/api/auth/register` | Register new user (customer/provider) | `src/app/auth/register/page.tsx` |
 | **POST** | `/api/auth/login` | Login user, return JWT | `src/app/auth/login/page.tsx` |
-| **GET** | `/api/auth/me` | Get current authenticated user | Global Layout / Auth Context |
 
 ## 2. Gear (Public)
 | Method | Endpoint | Description | Frontend Component/Action |
 | :--- | :--- | :--- | :--- |
 | **GET** | `/api/gear` | Get all gear with filters (category, price, brand) | `src/app/gear/page.tsx` |
 | **GET** | `/api/gear/:id` | Get gear details | `src/app/gear/[id]/page.tsx` |
-| **GET** | `/api/categories` | Get all gear categories | Gear Catalog Filter Sidebar |
 
 ## 3. Rental Orders
 | Method | Endpoint | Description | Frontend Component/Action |
@@ -29,7 +27,6 @@ This document maps the Next.js frontend pages and components to the deployed Ren
 | **POST** | `/api/payments/create` | Create a payment intent/session for a rental order | `src/app/dashboard/customer/orders/[id]/pay/page.tsx` |
 | **POST** | `/api/payments/confirm` | Confirm/verify payment (webhook or callback) | `/payment/success` handling |
 | **GET** | `/api/payments` | Get user's payment history | Customer Dashboard Payment Tab |
-| **GET** | `/api/payments/:id` | Get payment details | Payment Receipt View |
 
 ## 5. Provider Management
 | Method | Endpoint | Description | Frontend Component/Action |
